@@ -1,2 +1,2 @@
 # gstreamer-camera-tests
-Scripts for testing the camera streaming using GStreamer
+Scripts for testing the camera streaming using GStreamer.
