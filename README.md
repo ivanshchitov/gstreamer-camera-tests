@@ -96,6 +96,52 @@ caps="application/x-rtp,encoding-name=H264,payload=96" \
 ! rtph264depay ! queue ! h264parse ! queue ! avdec_h264 ! queue ! autovideosink
 ```
 
+## Скрипты для работы с JPEG-данными
+
+### send-jpeg.sh
+
+Отправляет JPEG-данные по сети.
+Команда:
+
+```
+gst-launch-1.0 -v autovideosrc device=/dev/video0 \
+! video/x-raw,width=1280,height=720 \
+! jpegenc ! rtpjpegpay ! udpsink host=$IP_ADDRESS port=$PORT
+```
+
+### recv-jpeg.sh
+
+Принимает JPEG-данные по сети.
+Команда:
+
+```
+gst-launch-1.0 -v udpsrc port=3434 \
+caps="application/x-rtp,encoding-name=JPEG,payload=26" \
+! rtpjpegdepay ! jpegdec ! autovideosink
+```
+
+### send-jpeg-with-queue.sh
+
+Отправляет JPEG-данные по сети, использует плагин `queue`.
+Команда:
+
+```
+gst-launch-1.0 -v autovideosrc device=/dev/video0 \
+! video/x-raw,width=1280,height=720 \
+! queue ! jpegenc ! rtpjpegpay ! udpsink host=$IP_ADDRESS port=$PORT
+```
+
+### recv-jpeg-with-queue.sh
+
+Принимает JPEG-данные по сети, использует плагин `queue`.
+Команда:
+
+```
+gst-launch-1.0 -v udpsrc port=$PORT \
+caps="application/x-rtp,encoding-name=JPEG,payload=26" \
+! rtpjpegdepay ! queue ! jpegdec ! queue ! autovideosink
+```
+
 ## Скрипты для работы с данными VP9
 
 ### send-vp9.sh
