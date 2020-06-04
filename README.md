@@ -1,5 +1,6 @@
 # gstreamer-camera-tests
-Scripts for testing the camera streaming using GStreamer.
+
+Скрипты для тестирования стриминга потока с камеры с помощью GStreamer.
 
 ## Скрипты для работы с RAW-данными
 
