@@ -16,10 +16,10 @@ Send the H264 encoded video data from camera by the IP-address and port.
 This script uses the 'rtpbin' plugin.
 
 Command:
-gst-launch-1.0 -v autovideosrc rtpbin name=rtpbin device=/dev/video0 \
+gst-launch-1.0 -v rtpbin name=rtpbin autovideosrc device=/dev/video0 \
 ! video/x-raw,width=1280,heigth=720 \
 ! videoconvert ! x264enc tune=zerolatency threads=1 \
-! rtph264pay ! ! rtpbin.send_rtp_sink_0 rtpbin.send_rtp_src_0 \
+! rtph264pay ! rtpbin.send_rtp_sink_0 rtpbin.send_rtp_src_0 \
 ! udpsink host=$IP_ADDRESS port=$PORT
 
 Usage:

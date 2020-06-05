@@ -17,7 +17,7 @@ This script can be runned only if the device has installed 'avdec_h264' plugin.
 
 Command:
 gst-launch-1.0 -v udpsrc port=$PORT \
-caps="application/x-rtp,encoding-name=H264,payload=96" \
+caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)H264,payload=(string)96" \
 ! .recv_rtp_sink_0 rtpbin ! rtph264depay ! h264parse ! avdec_h264 ! autovideosink
 
 Usage:
@@ -50,5 +50,5 @@ while [[ ${1:-} ]]; do
 done
 
 gst-launch-1.0 -v udpsrc port=$PORT \
-caps="application/x-rtp,encoding-name=H264,payload=96" \
+caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)H264,payload=(string)96" \
 ! .recv_rtp_sink_0 rtpbin ! rtph264depay ! h264parse ! avdec_h264 ! autovideosink
