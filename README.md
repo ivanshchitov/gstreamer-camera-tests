@@ -26,6 +26,29 @@ caps="application/x-rtp,media=(string)video,encoding-name=(string)RAW,sampling=(
 ! rtpvrawdepay ! videoconvert ! autovideosink
 ```
 
+### send-raw-with-rtpbin.sh
+
+Отправляет RAW-данные по сети, использует плагин `rtpbin`.
+Команда:
+
+```
+gst-launch-1.0 -v rtpbin name=rtpbin autovideosrc device=/dev/video0 \
+! video/x-raw,width=1280,heigth=720 \
+! videoconvert ! rtpvrawpay ! rtpbin.send_rtp_sink_0 rtpbin.send_rtp_src_0 \
+! udpsink host=$IP_ADDRESS port=$PORT
+```
+
+### recv-raw-with-rtpbin.sh
+
+Принимает RAW-данные по сети, использует плагин `rtpbin`.
+Команда:
+
+```
+gst-launch-1.0 -v udpsrc port=3434 \
+caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)RAW,sampling=(string)YCbCr-4:2:2,width=(string)1280,height=(string)720,payload=(int)96,depth=(string)8" \
+! .recv_rtp_sink_0 rtpbin ! rtpvrawdepay ! videoconvert ! autovideosink
+```
+
 ### send-raw-with-queue.sh
 
 Отправляет RAW-данные по сети, использует плагин `queue`.
