@@ -2,6 +2,12 @@
 
 Скрипты для тестирования стриминга потока с камеры с помощью GStreamer.
 
+- [Скрипты для работы с RAW-данными](#скрипты-для-работы-с-raw-данными)
+- [Скрипты для работы с данными H264](#скрипты-для-работы-с-данными-h264)
+- [Скрипты для работы с JPEG-данными](#скрипты-для-работы-с-jpeg-данными)
+- [Скрипты для работы с данными VP9](#скрипты-для-работы-с-данными-vp9)
+- [Результаты экспериментов](#результаты-экспериментов)
+
 ## Скрипты для работы с RAW-данными
 
 ### send-raw.sh
@@ -258,3 +264,28 @@ gst-launch-1.0 -v udpsrc port=$PORT \
 caps="application/x-rtp,media=(string)video,encoding-name=(string)VP9,payload=(int)96" \
 ! rtpvp9depay ! queue ! vp9dec ! queue ! autovideosink
 ```
+
+### send-vp9-with-rtpbin.sh
+
+Отправляет VP9-данные по сети, использует плагин `rtpbin`.
+Команда:
+
+```
+gst-launch-1.0 -v rtpbin name=rtpbin autovideosrc device=/dev/video0 \
+! video/x-raw,width=1280,heigth=720 \
+! videoconvert ! vp9enc ! rtpvp9pay ! rtpbin.send_rtp_sink_0 rtpbin.send_rtp_src_0 \
+! udpsink host=$IP_ADDRESS port=$PORT
+```
+
+### recv-vp9-with-rtpbin.sh
+
+Принимает VP9-данные по сети, использует плагин `rtpbin`.
+Команда:
+
+```
+gst-launch-1.0 -v udpsrc port=$PORT \
+caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)VP9,payload=(int)96" \
+! .recv_rtp_sink_0 rtpbin ! rtpvp9depay ! vp9dec ! autovideosink
+```
+
+## Результаты экспериментов
