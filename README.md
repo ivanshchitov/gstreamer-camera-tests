@@ -44,7 +44,7 @@ gst-launch-1.0 -v rtpbin name=rtpbin autovideosrc device=/dev/video0 \
 Команда:
 
 ```
-gst-launch-1.0 -v udpsrc port=3434 \
+gst-launch-1.0 -v udpsrc port=$PORT \
 caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)RAW,sampling=(string)YCbCr-4:2:2,width=(string)1280,height=(string)720,payload=(int)96,depth=(string)8" \
 ! .recv_rtp_sink_0 rtpbin ! rtpvrawdepay ! videoconvert ! autovideosink
 ```
@@ -162,8 +162,8 @@ gst-launch-1.0 -v autovideosrc device=/dev/video0 \
 Команда:
 
 ```
-gst-launch-1.0 -v udpsrc port=3434 \
-caps="application/x-rtp,encoding-name=JPEG,payload=26" \
+gst-launch-1.0 -v udpsrc port=$PORT \
+caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)JPEG,payload=(int)26" \
 ! rtpjpegdepay ! jpegdec ! autovideosink
 ```
 
@@ -185,8 +185,31 @@ gst-launch-1.0 -v autovideosrc device=/dev/video0 \
 
 ```
 gst-launch-1.0 -v udpsrc port=$PORT \
-caps="application/x-rtp,encoding-name=JPEG,payload=26" \
+caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)JPEG,payload=(int)26" \
 ! rtpjpegdepay ! queue ! jpegdec ! queue ! autovideosink
+```
+
+### send-jpeg-with-rtpbin.sh
+
+Отправляет JPEG-данные по сети, использует плагин `rtpbin`.
+Команда:
+
+```
+gst-launch-1.0 -v rtpbin name=rtpbin autovideosrc device=/dev/video0 \
+! video/x-raw,width=1280,height=720 \
+! jpegenc quality=50 ! rtpjpegpay ! rtpbin.send_rtp_sink_0 rtpbin.send_rtp_src_0 \
+! udpsink host=$IP_ADDRESS port=$PORT
+```
+
+### recv-jpeg-with-rtpbin.sh
+
+Принимает JPEG-данные по сети, использует плагин `rtpbin`.
+Команда:
+
+```
+gst-launch-1.0 -v udpsrc port=$PORT \
+caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)JPEG,payload=(int)26" \
+! .recv_rtp_sink_0 rtpbin ! rtpjpegdepay ! jpegdec ! autovideosink
 ```
 
 ## Скрипты для работы с данными VP9

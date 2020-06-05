@@ -12,13 +12,14 @@ fail() {
 usage() {
     cat <<EOF
 
-Send the VP9 encoded video data from camera by the IP-address and port.
-This script uses the 'queue' plugin.
+Send the motion JPEG video data from camera by the IP-address and port.
+This script uses the 'rtpbin' plugin.
 
 Command:
-gst-launch-1.0 -v udpsrc port=$PORT \
-caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)JPEG,payload=(int)26" \
-! rtpjpegdepay ! queue ! jpegdec ! queue ! autovideosink
+gst-launch-1.0 -v rtpbin name=rtpbin autovideosrc device=/dev/video0 \
+! video/x-raw,width=1280,height=720 \
+! jpegenc quality=50 ! rtpjpegpay ! rtpbin.send_rtp_sink_0 rtpbin.send_rtp_src_0 \
+! udpsink host=$IP_ADDRESS port=$PORT
 
 Usage:
    $(basename $0) [OPTION]
@@ -54,6 +55,7 @@ while [[ ${1:-} ]]; do
     esac
 done
 
-gst-launch-1.0 -v udpsrc port=$PORT \
-caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)JPEG,payload=(int)26" \
-! rtpjpegdepay ! queue ! jpegdec ! queue ! autovideosink
+gst-launch-1.0 -v rtpbin name=rtpbin autovideosrc device=/dev/video0 \
+! video/x-raw,width=1280,height=720 \
+! jpegenc quality=50 ! rtpjpegpay ! rtpbin.send_rtp_sink_0 rtpbin.send_rtp_src_0 \
+! udpsink host=$IP_ADDRESS port=$PORT

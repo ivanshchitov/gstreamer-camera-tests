@@ -14,8 +14,8 @@ usage() {
 Receive the motion JPEG video data from the port.
 
 Command:
-gst-launch-1.0 -v udpsrc port=3434 \
-caps="application/x-rtp,encoding-name=JPEG,payload=26" \
+gst-launch-1.0 -v udpsrc port=$PORT \
+caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)JPEG,payload=(int)26" \
 ! rtpjpegdepay ! jpegdec ! autovideosink
 
 Usage:
@@ -47,6 +47,6 @@ while [[ ${1:-} ]]; do
     esac
 done
 
-gst-launch-1.0 -v udpsrc port=3434 \
-caps="application/x-rtp,encoding-name=JPEG,payload=26" \
+gst-launch-1.0 -v udpsrc port=$PORT \
+caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)JPEG,payload=(int)26" \
 ! rtpjpegdepay ! jpegdec ! autovideosink

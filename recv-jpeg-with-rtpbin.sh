@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-IP_ADDRESS=127.0.0.1
 PORT=3434
 
 fail() {
@@ -12,21 +11,20 @@ fail() {
 usage() {
     cat <<EOF
 
-Send the VP9 encoded video data from camera by the IP-address and port.
-This script uses the 'queue' plugin.
+Receive the motion JPEG video data from the port.
+This script uses the 'rtpbin' plugin.
 
 Command:
 gst-launch-1.0 -v udpsrc port=$PORT \
 caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)JPEG,payload=(int)26" \
-! rtpjpegdepay ! queue ! jpegdec ! queue ! autovideosink
+! .recv_rtp_sink_0 rtpbin ! rtpjpegdepay ! jpegdec ! autovideosink
 
 Usage:
    $(basename $0) [OPTION]
 
 Options:
-   -i    | --ip-address <IP_ADDRESS>   IP-address to send video data [$IP_ADDRESS]
-   -p    | --port <PORT>               Port to send video data [$PORT]
-   -h    | --help                      this help
+   -p    | --port <PORT>    Port to receive video data [$PORT]
+   -h    | --help           this help
 
 EOF
     # exit if any argument is given
@@ -36,10 +34,6 @@ EOF
 # handle commandline options
 while [[ ${1:-} ]]; do
     case "$1" in
-        -i | --ip-address )
-            shift
-            IP_ADDRESS=$1; shift
-            ;;
         -p | --port )
             shift
             PORT=$1; shift
@@ -56,4 +50,4 @@ done
 
 gst-launch-1.0 -v udpsrc port=$PORT \
 caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)JPEG,payload=(int)26" \
-! rtpjpegdepay ! queue ! jpegdec ! queue ! autovideosink
+! .recv_rtp_sink_0 rtpbin ! rtpjpegdepay ! jpegdec ! autovideosink
