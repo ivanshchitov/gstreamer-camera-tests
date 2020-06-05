@@ -119,6 +119,30 @@ caps="application/x-rtp,encoding-name=H264,payload=96" \
 ! rtph264depay ! queue ! h264parse ! queue ! avdec_h264 ! queue ! autovideosink
 ```
 
+### send-h264-with-rtpbin.sh
+
+Отправляет H264-данные по сети, использует плагин `rtpbin`.
+Команда:
+
+```
+gst-launch-1.0 -v rtpbin name=rtpbin autovideosrc device=/dev/video0 \
+! video/x-raw,width=1280,heigth=720 \
+! videoconvert ! x264enc tune=zerolatency threads=1 \
+! rtph264pay ! rtpbin.send_rtp_sink_0 rtpbin.send_rtp_src_0 \
+! udpsink host=$IP_ADDRESS port=$PORT
+```
+
+### recv-h264-with-rtpbin.sh
+
+Принимает H264-данные по сети, использует плагин `rtpbin`.
+Команда:
+
+```
+gst-launch-1.0 -v udpsrc port=$PORT \
+caps="application/x-rtp,encoding-name=H264,payload=96" \
+! .recv_rtp_sink_0 rtpbin ! rtph264depay ! h264parse ! avdec_h264 ! autovideosink
+```
+
 ## Скрипты для работы с JPEG-данными
 
 ### send-jpeg.sh
