@@ -98,7 +98,7 @@ gst-launch-1.0 -v autovideosrc device=/dev/video0 \
 
 ```
 gst-launch-1.0 -v udpsrc port=$PORT \
-caps="application/x-rtp,encoding-name=H264,payload=96" \
+caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)H264,payload=(string)96" \
 ! rtph264depay ! h264parse ! avdec_h264 ! autovideosink
 ```
 
@@ -121,7 +121,7 @@ gst-launch-1.0 -v autovideosrc device=/dev/video0 \
 
 ```
 gst-launch-1.0 -v udpsrc port=$PORT \
-caps="application/x-rtp,encoding-name=H264,payload=96" \
+caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)H264,payload=(string)96" \
 ! rtph264depay ! queue ! h264parse ! queue ! avdec_h264 ! queue ! autovideosink
 ```
 
@@ -145,7 +145,7 @@ gst-launch-1.0 -v rtpbin name=rtpbin autovideosrc device=/dev/video0 \
 
 ```
 gst-launch-1.0 -v udpsrc port=$PORT \
-caps="application/x-rtp,encoding-name=H264,payload=96" \
+caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)H264,payload=(string)96" \
 ! .recv_rtp_sink_0 rtpbin ! rtph264depay ! h264parse ! avdec_h264 ! autovideosink
 ```
 
@@ -159,7 +159,7 @@ caps="application/x-rtp,encoding-name=H264,payload=96" \
 ```
 gst-launch-1.0 -v autovideosrc device=/dev/video0 \
 ! video/x-raw,width=1280,height=720 \
-! jpegenc ! rtpjpegpay ! udpsink host=$IP_ADDRESS port=$PORT
+! jpegenc quality=50 ! rtpjpegpay ! udpsink host=$IP_ADDRESS port=$PORT
 ```
 
 ### recv-jpeg.sh
@@ -181,7 +181,7 @@ caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=
 ```
 gst-launch-1.0 -v autovideosrc device=/dev/video0 \
 ! video/x-raw,width=1280,height=720 \
-! queue ! jpegenc ! rtpjpegpay ! udpsink host=$IP_ADDRESS port=$PORT
+! queue ! jpegenc quality=50 ! rtpjpegpay ! udpsink host=$IP_ADDRESS port=$PORT
 ```
 
 ### recv-jpeg-with-queue.sh
@@ -289,3 +289,24 @@ caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=
 ```
 
 ## Результаты экспериментов
+
+| Данные | Нагрузка на хосте| | Нагрузка на эмуляторе | | Комментрии |
+|  :---:  |    :---:        |:---:|           :---:   |:---:|---|
+|         | `VirtualBox` | `gst-launch` | `gst-launch` | `lipstick` |
+|  **RAW**  |
+| RAW | 190% | 80% | 80% | 20% | Картинка тормозит.<br/>Присутствуют артефакты. |
+| RAW + `rtpbin` | 160% | 75% | 45% | 20% | Картинка тормозит.<br/>Присутствуют артефакты.<br/>Через ~5 секунд после запуска прием данных останавливается, хотя `gst-launch` запущен и не выдает ошибок. |
+| RAW + `queue` | 150% | 90% | 75% | 20% | Картинка тормозит, но меньше, чем в остальных случаях с RAW.<br/>Присутствуют артефакты. |
+|  **H264**  |
+| H264 | 150% | 80% | 80% | 20% | Картинка не тормозит.<br/>Есть задержка между реальным движением и его отображением на экране в 2-3 сек.<br/>Артефактов нет. |
+| H264 + `rtpbin` | 160% | 85% | 100% | 20% |
+| H264 + `queue` | 150% | 90% | 85% | 20% |
+|  **JPEG**  |
+| JPEG | 170% | 80% | 95% | 25% | Картинка не тормозит.<br/>Есть задержка между реальным движением и его отображением на экране в 2-3 сек.<br/>Артефактов нет. |
+| JPEG + `rtpbin` | 185% | 85% | 115% | 25% |
+| JPEG + `queue` | 185% | 85% | 110% | 25% |
+|  **VP9**  |
+| VP9 | 15% | 300% | 10% | 5% | Картинка сильно тормозит. Интервал между кадрами ~4 секунды <br/>Артефактов нет.<br/> Особенность: Эмулятор выполняет отображение картинки, только, если прием на эмуляторе запущен раньше отправки на хосте.|
+| VP9 + `rtpbin` | 15% | 310% | 10% | 5% | Картинка тормозит сильнее. |
+| VP9 + `queue` | 15% | 300% | 10% | 5% |
+
