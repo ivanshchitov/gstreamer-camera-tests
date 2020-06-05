@@ -56,4 +56,4 @@ done
 
 gst-launch-1.0 -v autovideosrc device=/dev/video0 \
 ! video/x-raw,width=1280,height=720 \
-! queue ! jpegenc ! rtpjpegpay ! udpsink host=$IP_ADDRESS port=$PORT
+! queue ! jpegenc quality=50 ! rtpjpegpay ! udpsink host=$IP_ADDRESS port=$PORT
