@@ -294,6 +294,8 @@ caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=
 * MacBook Pro 2015, Intel Core i5 2.7 GHz.
 * Эмулятора Sailfish OS версии 3.3.0.16, было выделено 2 ядра процессора.
 
+Тип сетевого адаптера ВМ: Виртальный адаптер хоста.
+
 | Данные | Нагрузка на хосте| | Нагрузка на эмуляторе | | Комментрии |
 |  :---:  |    :---:        |:---:|           :---:   |:---:|---|
 |         | `VirtualBox` | `gst-launch` | `gst-launch` | `lipstick` |
