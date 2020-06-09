@@ -1,13 +1,8 @@
 #!/bin/bash
 set -e
 
-IP_ADDRESS=127.0.0.1
-PORT=3434
-
-fail() {
-    echo "FAIL: $@"
-    exit 1
-}
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "${DIR}/defaults.sh"
 
 usage() {
     cat <<EOF
@@ -56,8 +51,8 @@ while [[ ${1:-} ]]; do
     esac
 done
 
-gst-launch-1.0 -v rtpbin name=rtpbin autovideosrc device=/dev/video0 \
-! video/x-raw,width=1280,heigth=720 \
+gst-launch-1.0 -v rtpbin name=rtpbin v4l2src $VIDEO_SOURCE \
+! $RAW_VIDEO_PARAMS \
 ! videoconvert ! x264enc tune=zerolatency threads=1 \
 ! rtph264pay ! rtpbin.send_rtp_sink_0 rtpbin.send_rtp_src_0 \
 ! udpsink host=$IP_ADDRESS port=$PORT
