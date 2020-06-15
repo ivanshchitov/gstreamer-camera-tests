@@ -1,12 +1,8 @@
 #!/bin/bash
 set -e
 
-PORT=3434
-
-fail() {
-    echo "FAIL: $@"
-    exit 1
-}
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "${DIR}/defaults.sh"
 
 usage() {
     cat <<EOF
