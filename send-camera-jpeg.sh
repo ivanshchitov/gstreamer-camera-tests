@@ -7,13 +7,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 usage() {
     cat <<EOF
 
-Send the H264 encoded video data from camera by the IP-address and port.
+Send the motion JPEG video data from camera by the IP-address and port.
 
 Command:
 gst-launch-1.0 -v autovideosrc device=/dev/video0 \
-! video/x-raw,width=1280,heigth=720 \
-! videoconvert ! x264enc tune=zerolatency threads=1 \
-! rtph264pay ! udpsink host=$IP_ADDRESS port=$PORT
+! video/x-raw,width=1280,height=720 \
+! jpegenc quality=50 ! rtpjpegpay ! udpsink host=$IP_ADDRESS port=$PORT
 
 Usage:
    $(basename $0) [OPTION]
@@ -49,7 +48,4 @@ while [[ ${1:-} ]]; do
     esac
 done
 
-gst-launch-1.0 -v $VIDEO_SOURCE \
-! $RAW_VIDEO_PARAMS \
-! videoconvert ! x264enc tune=zerolatency threads=1 \
-! rtph264pay ! udpsink host=$IP_ADDRESS port=$PORT
+gst-launch-1.0 -v $VIDEO_SOURCE ! $JPEG_PARAMS ! rtpjpegpay ! udpsink host=$IP_ADDRESS port=$PORT

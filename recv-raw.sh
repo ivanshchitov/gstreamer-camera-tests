@@ -1,12 +1,8 @@
 #!/bin/bash
 set -e
 
-PORT=3434
-
-fail() {
-    echo "FAIL: $@"
-    exit 1
-}
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "${DIR}/defaults.sh"
 
 usage() {
     cat <<EOF
@@ -47,6 +43,5 @@ while [[ ${1:-} ]]; do
     esac
 done
 
-gst-launch-1.0 -v udpsrc port=$PORT \
-caps="application/x-rtp,media=(string)video,encoding-name=(string)RAW,sampling=(string)YCbCr-4:2:2,width=(string)1280,height=(string)720,payload=(int)96" \
+gst-launch-1.0 -v udpsrc port=$PORT caps="${RAW_CAPS}" \
 ! rtpvrawdepay ! videoconvert ! autovideosink

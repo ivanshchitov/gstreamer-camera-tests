@@ -1,13 +1,8 @@
 #!/bin/bash
 set -e
 
-IP_ADDRESS=127.0.0.1
-PORT=3434
-
-fail() {
-    echo "FAIL: $@"
-    exit 1
-}
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "${DIR}/defaults.sh"
 
 usage() {
     cat <<EOF
@@ -53,6 +48,6 @@ while [[ ${1:-} ]]; do
     esac
 done
 
-gst-launch-1.0 -v autovideosrc device=/dev/video0 \
-! video/x-raw,width=1280,height=720 \
+gst-launch-1.0 -v $VIDEO_SOURCE \
+! $RAW_VIDEO_PARAMS \
 ! jpegenc quality=50 ! rtpjpegpay ! udpsink host=$IP_ADDRESS port=$PORT
