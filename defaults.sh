@@ -9,6 +9,7 @@ RAW_CAPS="application/x-rtp,media=(string)video,encoding-name=(string)RAW,sampli
 JPEG_PARAMS="image/jpeg,width=(int)1280,height=(int)720"
 SPROP_H264="\"Z01AH+iAKALdgLUBAQFAAAADAEAAAAwDxgxEgA\=\=\,aOvvIA\=\=\""
 H264_FILE_CAPS="application/x-rtp,media=(string)video,payload=(int)96,clock-rate=(int)90000,encoding-name=(string)H264,sprop-parameter-sets=(string)${SPROP_H264}"
+VP9_CAPS="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)VP9,payload=(int)96"
 
 # Put overrides into default_override.sh file
 

@@ -11,9 +11,8 @@ Receive the H264 video data from the port sent from a file.
 
 
 Command:
-gst-launch-1.0 -v udpsrc port=$PORT \
-caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)H264,payload=(string)96" \
-! rtph264depay ! h264parse ! avdec_h264 ! autovideosink
+gst-launch-1.0 -v udpsrc port=$PORT caps="${H264_FILE_CAPS}" \
+! rtph264depay ! decodebin ! autovideosink
 
 Usage:
    $(basename $0) [OPTION]

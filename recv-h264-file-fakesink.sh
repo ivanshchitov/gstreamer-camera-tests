@@ -7,12 +7,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 usage() {
     cat <<EOF
 
-Receive the VP9 video data from the port.
+Receive the H264 video data from the port sent from a file.
+
 
 Command:
-gst-launch-1.0 -v udpsrc port=$PORT \
-caps="application/x-rtp,media=(string)video,encoding-name=(string)VP9,payload=(int)96" \
-! rtpvp9depay ! vp9dec ! autovideosink
+gst-launch-1.0 -v udpsrc port=$PORT caps="${H264_FILE_CAPS}" \
+! rtph264depay ! decodebin ! fakesink
 
 Usage:
    $(basename $0) [OPTION]
@@ -43,5 +43,5 @@ while [[ ${1:-} ]]; do
     esac
 done
 
-gst-launch-1.0 -v udpsrc port=$PORT caps="${VP9_CAPS}" \
-! rtpvp9depay ! vp9dec ! autovideosink
+gst-launch-1.0 -v udpsrc port=$PORT caps="${H264_FILE_CAPS}" \
+! rtph264depay ! decodebin ! fakesink
